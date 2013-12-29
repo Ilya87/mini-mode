@@ -2,11 +2,9 @@
 #define MEDIAPLAYERPLUGININTERFACE_H
 
 #include "basicplugininterface.h"
+#include "mediaplayer.h"
 
-#include <QMainWindow>
-#include <mediaplayer.h>
-
-class MediaPlayerPluginInterface : public BasicPluginInterface
+class MIAMCORE_LIBRARY MediaPlayerPluginInterface : public BasicPluginInterface
 {
 public:
 	virtual ~MediaPlayerPluginInterface() {}
@@ -14,6 +12,8 @@ public:
 	virtual void setMediaPlayer(QWeakPointer<MediaPlayer>) = 0;
 
 	virtual bool providesView() const = 0;
+
+	virtual void toggleViews(QWidget *) {}
 };
 QT_BEGIN_NAMESPACE
 

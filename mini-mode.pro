@@ -1,30 +1,36 @@
-QT       += widgets multimedia
+QT      += widgets multimedia
 
-QMAKE_CXXFLAGS += -std=c++11
-
-TARGET = mini-mode
+TARGET   = $$qtLibraryTarget(mini-mode)
 TEMPLATE = lib
 
-target.path = C:\dev\Madame-Miam-Miam-Music-Player\build\MiamPlayer\release\plugins
-INSTALLS += target
+MiamPlayerBuildDirectory = C:\dev\Madame-Miam-Miam-Music-Player\build\MiamPlayer
 
-DEFINES += MINIMODE_LIBRARY
+DEFINES += MIAM_PLUGIN
 
-SOURCES += minimode.cpp
-
-HEADERS += minimode.h\
-    basicplugininterface.h \
-    mediaplayer.h \
-    mediaplayerplugininterface.h \
-    miamcore_global.h
-
-CONFIG  += plugin
+CONFIG  += c++11
 CONFIG(debug, debug|release) {
-    LIBS += -debug -lMiamCore
+    target.path = $$MiamPlayerBuildDirectory\debug\plugins
+    LIBS += -Ldebug -lMiamCore
 }
 
 CONFIG(release, debug|release) {
+    target.path = $$MiamPlayerBuildDirectory\release\plugins
     LIBS += -Lrelease -lMiamCore
 }
 
-RESOURCES +=
+INSTALLS += target
+
+HEADERS += basicplugininterface.h \
+    mediaplayer.h \
+    mediaplayerplugininterface.h \
+    miamcore_global.h \
+    minimode.h \
+    settings.h
+
+SOURCES += minimode.cpp
+
+RESOURCES += \
+    resources.qrc
+
+FORMS += \
+    config.ui
