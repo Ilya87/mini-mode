@@ -36,17 +36,19 @@ public:
 
 	virtual ~Minimode();
 
+	virtual QWidget* configPage();
+
+	inline virtual bool isConfigurable() const { return true; }
+
 	inline virtual QString name() const { return "Minimode"; }
 
-	inline virtual QString version() const { return "1.0"; }
-
 	inline virtual bool providesView() const { return true; }
-
-	virtual QWidget* configPage();
 
 	virtual void setMediaPlayer(QWeakPointer<MediaPlayer> mediaPlayer);
 
 	virtual void toggleViews(QWidget *view);
+
+	inline virtual QString version() const { return "1.0"; }
 
 protected:
 	/** Redefined to be able to drag this widget on screen. */
