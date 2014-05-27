@@ -1,6 +1,7 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include <QFileInfo>
 #include <QPushButton>
 #include <QSettings>
 
@@ -16,7 +17,7 @@ private:
 
 	/** Private constructor. */
 	Settings(const QString &organization = "MmeMiamMiam",
-			 const QString &application = "MmeMiamMiamMusicPlayer");
+			 const QString &application = "MiamPlayer");
 
 	/** Store the size of each font used in the app. */
 	QMap<QString, QVariant> fontPointSizeMap;
@@ -31,15 +32,19 @@ private:
 	QMap<QString, QVariant> columnStates;
 
 	Q_ENUMS(FontFamily)
+	Q_ENUMS(PlaylistDefaultAction)
 
 public:
 	enum FontFamily{PLAYLIST, LIBRARY, MENUS};
 
+	enum PlaylistDefaultAction{AskUserForAction	= 0,
+							   SaveOnClose		= 1,
+							   DiscardOnClose	= 2};
+
 	/** Singleton Pattern to easily use Settings everywhere in the app. */
 	static Settings* getInstance();
 
-	/** Returns the size of the buffer for a cover. */
-	int bufferedCoverSize() const;
+	qreal bigCoverOpacity() const;
 
 	/** Returns the actual size of media buttons. */
 	int buttonsSize() const;
@@ -55,6 +60,8 @@ public:
 	/** Returns the size of a cover. */
 	int coverSize() const;
 
+	QColor customColors(QPalette::ColorRole cr) const;
+
 	/** Custom icons in CustomizeTheme */
 	const QString customIcon(QPushButton *, bool toggled = false) const;
 
@@ -69,6 +76,9 @@ public:
 	/** Custom icons in CustomizeTheme */
 	bool hasCustomIcon(QPushButton *) const;
 
+	/** Returns true if big and faded covers are displayed in the library when an album is expanded. */
+	bool isBigCoverEnabled() const;
+
 	/** Returns true if covers are displayed in the library. */
 	bool isCoversEnabled() const;
 
@@ -77,8 +87,16 @@ public:
 	/** Returns true if the button in parameter is visible or not. */
 	bool isMediaButtonVisible(const QString & buttonName) const;
 
+	bool isPlaylistResizeColumns() const;
+
+	/** Returns true if tabs should be displayed like rectangles. */
+	bool isRectTabs() const;
+
 	/** Returns true if stars are visible and active. */
 	bool isStarDelegates() const;
+
+	/** Returns true if the volume value in percent is always visible in the upper left corner of the widget. */
+	bool isVolumeBarTextAlwaysVisible() const;
 
 	/** Returns the language of the application. */
 	QString language();
@@ -86,13 +104,22 @@ public:
 	/** Returns all music locations. */
 	QStringList musicLocations() const;
 
+	int tabsOverlappingLength() const;
+
 	/// PlayBack options
 	qint64 playbackSeekTime() const;
+
+	PlaylistDefaultAction playbackDefaultActionForClose() const;
+
 	bool playbackKeepPlaylists() const;
+
+	bool playbackRestorePlaylistsAtStartup() const;
 
 	QByteArray restoreColumnStateForPlaylist(int playlistIndex) const;
 
 	void saveColumnStateForPlaylist(int playlistIndex, const QByteArray &state);
+
+	void setCustomColorRole(QPalette::ColorRole cr, const QColor &color);
 
 	/** Custom icons in CustomizeTheme */
 	void setCustomIcon(QPushButton *, const QString &buttonName);
@@ -114,10 +141,13 @@ public:
 	/** Returns volume from the slider. */
 	int volume() const;
 
+	int volumeBarHideAfter() const;
+
 public slots:
 
-	/** Sets the size of the buffer for a cover. */
-	void setBufferedCoverSize(int i);
+	void setBigCoverOpacity(int v);
+
+	void setBigCovers(bool b);
 
 	/** Sets a new button size. */
 	void setButtonsSize(const int &s);
@@ -129,11 +159,9 @@ public slots:
 	void setCopyTracksFromPlaylist(bool b);
 
 	void setCovers(bool b);
+	void setCoverSize(int s);
 
 	void setCustomColors(bool b);
-
-	/// StyleSheets
-	void setCustomStyleSheet(QWidget *w);
 
 	/** Sets if stars are visible and active. */
 	void setDelegates(const bool &value);
@@ -151,7 +179,13 @@ public slots:
 
 	/// PlayBack options
 	void setPlaybackSeekTime(int t);
+	void setPlaybackDefaultActionForClose(PlaylistDefaultAction action);
 	void setPlaybackKeepPlaylists(bool b);
+	void setPlaybackRestorePlaylistsAtStartup(bool b);
+
+	void setTabsOverlappingLength(int l);
+
+	void setTabsRect(bool b);
 
 	/** Sets a new theme. */
 	void setThemeName(const QString &theme);
@@ -159,8 +193,15 @@ public slots:
 	/** Sets volume from the slider. */
 	void setVolume(int v);
 
+	void setVolumeBarHideAfter(int seconds);
+	void setVolumeBarTextAlwaysVisible(bool b);
+
 signals:
 	void themeHasChanged();
+
+	void fontHasChanged(const FontFamily &fontFamily, const QFont &font);
 };
+
+Q_DECLARE_METATYPE(QPalette::ColorRole)
 
 #endif // SETTINGS_H

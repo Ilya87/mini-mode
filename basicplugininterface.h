@@ -2,6 +2,7 @@
 #define BASICPLUGININTERFACE_H
 
 #include <QString>
+#include <QTranslator>
 #include <QtPlugin>
 
 #include "miamcore_global.h"
@@ -9,6 +10,8 @@
 class MIAMCORE_LIBRARY BasicPluginInterface
 {
 public:
+	QTranslator translator;
+
 	virtual ~BasicPluginInterface() {}
 
 	virtual QWidget* configPage() = 0;
@@ -22,7 +25,7 @@ public:
 
 QT_BEGIN_NAMESPACE
 
-#define BasicPluginInterface_iid "MmeMiamMiamMusicPlayer.BasicPluginInterface"
+#define BasicPluginInterface_iid "MiamPlayer.BasicPluginInterface"
 
 Q_DECLARE_INTERFACE(BasicPluginInterface, BasicPluginInterface_iid)
 

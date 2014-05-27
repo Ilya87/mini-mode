@@ -3,7 +3,7 @@ QT      += widgets multimedia
 TARGET   = $$qtLibraryTarget(mini-mode)
 TEMPLATE = lib
 
-MiamPlayerBuildDirectory = C:\dev\Madame-Miam-Miam-Music-Player\build\MiamPlayer
+MiamPlayerBuildDirectory = C:\dev\Miam-Player-build-x64\MiamPlayer
 
 DEFINES += MIAM_PLUGIN
 
