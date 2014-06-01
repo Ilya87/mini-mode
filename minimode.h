@@ -11,6 +11,7 @@
 #include <QWindow>
 
 #include "ui_config.h"
+#include "ui_mini-mode.h"
 
 /**
  * \brief       The Minimode class is a mini player like the good old Winamp
@@ -20,12 +21,13 @@
  */
 class Minimode : public QWidget, public MediaPlayerPluginInterface
 {
-    Q_OBJECT
+	Q_OBJECT
 	Q_PLUGIN_METADATA(IID MediaPlayerPluginInterface_iid)
-    Q_INTERFACES(MediaPlayerPluginInterface)
+	Q_INTERFACES(MediaPlayerPluginInterface)
 
 private:
-	Ui::ConfigForm _ui;
+	Ui::MiniModeConfigPage _config;
+	Ui::MiniMode _ui;
 
 	QWeakPointer<MediaPlayer> _mediaPlayer;
 	bool _startMoving;
@@ -60,7 +62,7 @@ protected:
 	void mousePressEvent(QMouseEvent *e);
 
 private:
-	void applyColorToStandardIcon(QPushButton *button);
+	void applyColorToStandardIcon(bool hasTheme, QAbstractButton *button);
 
 };
 

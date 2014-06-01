@@ -25,12 +25,14 @@ HEADERS += basicplugininterface.h \
     mediaplayerplugininterface.h \
     miamcore_global.h \
     minimode.h \
-    settings.h
+    settings.h \
+    filehelper.h \
+    timelabel.h
 
 SOURCES += minimode.cpp
 
-RESOURCES += \
-    resources.qrc
+RESOURCES +=
 
 FORMS += \
-    config.ui
+    config.ui \
+    mini-mode.ui

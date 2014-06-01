@@ -1,6 +1,7 @@
 #include "minimode.h"
 
 #include "settings.h"
+#include "filehelper.h"
 
 #include <QApplication>
 #include <QDesktopWidget>
@@ -20,29 +21,20 @@ Minimode::Minimode()
 {
 	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 	this->setWindowIcon(QIcon(":/icons/mmmmp_win32"));
-	this->setMaximumSize(275, 28);
 
-	QVBoxLayout *vBoxLayout = new QVBoxLayout(this);
-	vBoxLayout->setObjectName("vBoxLayout");
-	QHBoxLayout *topHBoxLayout = new QHBoxLayout(this);
-	topHBoxLayout->setObjectName("topHBoxLayout");
-	QHBoxLayout *bottomHBoxLayout = new QHBoxLayout(this);
-	bottomHBoxLayout->setObjectName("bottomHBoxLayout");
+	_ui.setupUi(this);
 
-	vBoxLayout->setContentsMargins(0, 0, 0, 0);
-	vBoxLayout->setSpacing(0);
-	topHBoxLayout->setContentsMargins(0, 0, 0, 0);
-	topHBoxLayout->setSpacing(0);
-	bottomHBoxLayout->setContentsMargins(0, 0, 0, 0);
-	bottomHBoxLayout->setSpacing(0);
+	// Media buttons
+	_ui.previous->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
+	_ui.play->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+	_ui.pause->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+	_ui.stop->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
+	_ui.next->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
 
-	vBoxLayout->addLayout(topHBoxLayout);
-	vBoxLayout->addLayout(bottomHBoxLayout);
-	this->setLayout(vBoxLayout);
-
-	QLabel *currentTrack = new QLabel(tr("<No track>").toUpper());
-	currentTrack->setFont(QFont("Arial", 7));
-	bottomHBoxLayout->addWidget(currentTrack);
+	// Window management
+	_ui.minimize->setIcon(style()->standardIcon(QStyle::SP_TitleBarMinButton));
+	_ui.restore->setIcon(style()->standardIcon(QStyle::SP_TitleBarMaxButton));
+	_ui.close->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton));
 }
 
 Minimode::~Minimode()
@@ -51,108 +43,68 @@ Minimode::~Minimode()
 QWidget* Minimode::configPage()
 {
 	QWidget *widget = new QWidget();
-	_ui.setupUi(widget);
+	_config.setupUi(widget);
 
 	// Init the UI with correct values
-	_ui.winampCheckBox->setChecked(Settings::getInstance()->value("hasWinampTheme").toBool());
+	bool hasWinampTheme = Settings::getInstance()->value("hasWinampTheme").toBool();
+	_config.winampCheckBox->setChecked(hasWinampTheme);
+
+	auto apply = [this](bool colorIcons) {
+		//if (colorIcons) {
+		foreach (QPushButton *b, findChildren<QPushButton*>()) {
+			this->applyColorToStandardIcon(colorIcons, b);
+		}
+		//}
+	};
+	apply(hasWinampTheme);
+
 
 	// Connect the UI with the settings
-	connect(_ui.winampCheckBox, &QCheckBox::stateChanged, [=](int s) {
-		Settings::getInstance()->setValue("hasWinampTheme", (s == Qt::Checked));
+	connect(_config.winampCheckBox, &QCheckBox::toggled, [=](bool b) {
+		Settings::getInstance()->setValue("hasWinampTheme", b);
+		apply(b);
 	});
 	return widget;
 }
 
 void Minimode::setMediaPlayer(QWeakPointer<MediaPlayer> mediaPlayer)
 {
-    _mediaPlayer = mediaPlayer;
+	_mediaPlayer = mediaPlayer;
 
-	QSize sizeButton(10, 10);
+	// Multimedia actions
+	connect(_ui.previous, &QPushButton::clicked, _mediaPlayer.data(), &MediaPlayer::skipBackward);
+	connect(_ui.play, &QPushButton::clicked, _mediaPlayer.data(), &MediaPlayer::play);
+	connect(_ui.pause, &QPushButton::clicked, _mediaPlayer.data(), &MediaPlayer::pause);
+	connect(_ui.stop, &QPushButton::clicked, _mediaPlayer.data(), &MediaPlayer::stop);
+	connect(_ui.next, &QPushButton::clicked, _mediaPlayer.data(), &MediaPlayer::skipForward);
 
-	// Media buttons
-	QPushButton *previous = new QPushButton(this);
-	QPushButton *play = new QPushButton(this);
-	QPushButton *pause = new QPushButton(this);
-	QPushButton *stop = new QPushButton(this);
-	QPushButton *next = new QPushButton(this);
-
-	previous->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
-	play->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
-	pause->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
-	stop->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
-	next->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
-
-	// Control
-	QSlider *slider = new QSlider(Qt::Horizontal, this);
-	slider->setMaximumWidth(16);
-	slider->setMaximumHeight(7);
-	slider->setStyleSheet("QSlider::groove:horizontal  {" \
-		"border: 1px solid #999999;" \
-		"border-top-color: #000010;" \
-		"border-right-color: #5A6B7B;" \
-		"border-bottom-color: #5A6B7B;" \
-		"border-left-color: #000010;" \
-		"background: #39395A;" \
-		"margin: 0;" \
-	"}" \
-	"QSlider::handle:horizontal  {" \
-		"background: 1px solid #ECCE7A;" \
-		"border-radius: 1px;" \
-		"margin-top: -1px;" \
-		"margin-bottom: -1px;" \
-		"width: 3px;" \
-	"}");
-
-	// Window management
-	QPushButton *minimize = new QPushButton(this);
-	QPushButton *restore = new QPushButton(this);
-	QPushButton *close = new QPushButton(this);
-
-	minimize->setIcon(style()->standardIcon(QStyle::SP_TitleBarMinButton));
-	restore->setIcon(style()->standardIcon(QStyle::SP_TitleBarMaxButton));
-	close->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton));
-
-	//foreach (QPushButton *b, QList<QPushButton*>({previous, play, pause, stop, next})) {
-	QList<QPushButton *> buttons = QList<QPushButton*>() << previous << play << stop << next;
-	foreach (QPushButton *b, buttons) {
-		b->setFlat(true);
-		b->setIconSize(sizeButton);
-		layout()->itemAt(0)->layout()->addWidget(b);
-		b->installEventFilter(this);
-		this->applyColorToStandardIcon(b);
-	}
-	layout()->itemAt(0)->layout()->addWidget(slider);
-	//foreach (QPushButton *b, QList<QPushButton*>({minimize, restore, close})) {
-	QList<QPushButton *> buttons2 = QList<QPushButton*>() << minimize << restore << close;
-	foreach (QPushButton *b, buttons2) {
-		b->setFlat(true);
-		b->setIconSize(sizeButton);
-		layout()->itemAt(0)->layout()->addWidget(b);
-		b->installEventFilter(this);
-		this->applyColorToStandardIcon(b);
-	}
-	this->setStyleSheet("QWidget { background: #39395A; } QPushButton { margin: 0; padding: 0; }");
-
-	connect(previous, &QPushButton::clicked, _mediaPlayer.data(), &MediaPlayer::skipBackward);
-	connect(play, &QPushButton::clicked, _mediaPlayer.data(), &MediaPlayer::play);
-	connect(pause, &QPushButton::clicked, _mediaPlayer.data(), &MediaPlayer::pause);
-	connect(stop, &QPushButton::clicked, _mediaPlayer.data(), &MediaPlayer::stop);
-	connect(next, &QPushButton::clicked, _mediaPlayer.data(), &MediaPlayer::skipForward);
-	connect(minimize, &QPushButton::clicked, [=]() {
+	// Windows actions
+	connect(_ui.minimize, &QPushButton::clicked, [=]() {
 		QMainWindow *mw = qobject_cast<QMainWindow*>(_mediaPlayer.data()->parent());
 		if (mw) {
 			mw->close();
 		}
 		this->showMinimized();
 	});
-	connect(restore, &QPushButton::clicked, [=]() {
+	connect(_ui.restore, &QPushButton::clicked, [=]() {
 		QMainWindow *mw = qobject_cast<QMainWindow*>(_mediaPlayer.data()->parent());
 		if (mw) {
 			mw->showNormal();
 		}
 		this->close();
 	});
-	connect(close, &QPushButton::clicked, &QApplication::quit);
+	connect(_ui.close, &QPushButton::clicked, &QApplication::quit);
+
+	connect(_mediaPlayer.data(), &QMediaPlayer::currentMediaChanged, [=](const QMediaContent &media) {
+		FileHelper fh(media);
+		_ui.currentTrack->setText(fh.trackNumber().append(" - ").append(fh.title()));
+	});
+
+	connect(_mediaPlayer.data(), &QMediaPlayer::positionChanged, [=] (qint64 pos) {
+		if (_mediaPlayer.data()->duration() > 0) {
+			_ui.time->setTime(pos, _mediaPlayer.data()->duration());
+		}
+	});
 }
 
 void Minimode::toggleViews(QWidget *view)
@@ -211,10 +163,10 @@ void Minimode::mousePressEvent(QMouseEvent *e)
 	QWidget::mousePressEvent(e);
 }
 
-void Minimode::applyColorToStandardIcon(QPushButton *button)
+void Minimode::applyColorToStandardIcon(bool hasTheme, QAbstractButton *button)
 {
-	QPixmap sourcePixmap = QIcon(":/icons/yellow").pixmap(QSize(8, 8));
-	QPixmap destinationPixmap = button->icon().pixmap(QSize(8, 8));
+	QPixmap sourcePixmap(8, 8);
+	QPixmap destinationPixmap = button->icon().pixmap(8, 8);
 	QPixmap resultPixmap = QPixmap(destinationPixmap);
 
 	QPainter painter(&resultPixmap);
@@ -225,6 +177,50 @@ void Minimode::applyColorToStandardIcon(QPushButton *button)
 	painter.drawPixmap(0, 0, destinationPixmap);
 
 	painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+	if (hasTheme) {
+		sourcePixmap.fill(QColor(236, 206, 122));
+		_ui.title->setStyleSheet("color: white;");
+		_ui.currentTrack->setStyleSheet("color: #00ff00;");
+		_ui.time->setStyleSheet("color: #00ff00;");
+		this->setStyleSheet("background: #39395A;");
+		_ui.slider->setStyleSheet("QSlider::groove:horizontal  { \
+									  border: 1px solid #999999; \
+									  border-top-color: #000010; \
+									  border-right-color: #5A6B7B; \
+									  border-bottom-color: #5A6B7B; \
+									  border-left-color: #000010; \
+									  background: #39395A; \
+									  margin: 0; \
+								  } \
+								  QSlider::handle:horizontal  { \
+									  background: 1px solid #ECCE7A; \
+									  border-radius: 1px; \
+									  margin-top: -1px; \
+									  margin-bottom: -1px; \
+									  width: 3px; \
+								  }");
+	} else {
+		sourcePixmap.fill(QApplication::palette().text().color());
+		_ui.title->setStyleSheet("");
+		_ui.currentTrack->setStyleSheet("");
+		_ui.time->setStyleSheet("");
+		this->setStyleSheet("");
+		_ui.slider->setStyleSheet("QSlider::groove:horizontal  { \
+									  border: 1px solid #999999; \
+									  border-top-color: #000010; \
+									  border-right-color: #5A6B7B; \
+									  border-bottom-color: #5A6B7B; \
+									  border-left-color: #000010; \
+									  margin: 0; \
+								  } \
+								  QSlider::handle:horizontal  { \
+									  background: 1px solid #000010; \
+									  border-radius: 1px; \
+									  margin-top: -1px; \
+									  margin-bottom: -1px; \
+									  width: 3px; \
+								  }");
+	}
 	painter.drawPixmap(0, 0, sourcePixmap);
 
 	painter.setCompositionMode(QPainter::CompositionMode_DestinationOver);
@@ -232,4 +228,5 @@ void Minimode::applyColorToStandardIcon(QPushButton *button)
 	painter.end();
 
 	button->setIcon(resultPixmap);
+
 }
