@@ -50,11 +50,9 @@ QWidget* Minimode::configPage()
 	_config.winampCheckBox->setChecked(hasWinampTheme);
 
 	auto apply = [this](bool colorIcons) {
-		//if (colorIcons) {
 		foreach (QPushButton *b, findChildren<QPushButton*>()) {
 			this->applyColorToStandardIcon(colorIcons, b);
 		}
-		//}
 	};
 	apply(hasWinampTheme);
 
@@ -228,5 +226,4 @@ void Minimode::applyColorToStandardIcon(bool hasTheme, QAbstractButton *button)
 	painter.end();
 
 	button->setIcon(resultPixmap);
-
 }

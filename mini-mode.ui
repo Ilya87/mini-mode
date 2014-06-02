@@ -77,6 +77,12 @@
          <pointsize>1</pointsize>
         </font>
        </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+	border: none;
+	outline: none;
+}</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -103,6 +109,12 @@
         <font>
          <pointsize>1</pointsize>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+	border: none;
+	outline: none;
+}</string>
        </property>
        <property name="text">
         <string/>
@@ -131,6 +143,12 @@
          <pointsize>1</pointsize>
         </font>
        </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+	border: none;
+	outline: none;
+}</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -158,6 +176,12 @@
          <pointsize>1</pointsize>
         </font>
        </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+	border: none;
+	outline: none;
+}</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -184,6 +208,12 @@
         <font>
          <pointsize>1</pointsize>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+	border: none;
+	outline: none;
+}</string>
        </property>
        <property name="text">
         <string/>
@@ -225,6 +255,12 @@
          <pointsize>1</pointsize>
         </font>
        </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+	border: none;
+	outline: none;
+}</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -252,6 +288,12 @@
          <pointsize>1</pointsize>
         </font>
        </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+	border: none;
+	outline: none;
+}</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -278,6 +320,12 @@
         <font>
          <pointsize>1</pointsize>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton:focus {
+	border: none;
+	outline: none;
+}</string>
        </property>
        <property name="text">
         <string/>
