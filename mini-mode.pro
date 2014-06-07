@@ -31,8 +31,24 @@ HEADERS += basicplugininterface.h \
 
 SOURCES += minimode.cpp
 
-RESOURCES +=
+RESOURCES += \
+    resources.qrc
 
 FORMS += \
     config.ui \
     mini-mode.ui
+
+TRANSLATIONS += translations/Minimode_ar.ts \
+    translations/Minimode_cs.ts \
+    translations/Minimode_de.ts \
+    translations/Minimode_en.ts \
+    translations/Minimode_es.ts \
+    translations/Minimode_fr.ts \
+    translations/Minimode_it.ts \
+    translations/Minimode_ja.ts \
+    translations/Minimode_kr.ts \
+    translations/Minimode_pt.ts \
+    translations/Minimode_ru.ts \
+    translations/Minimode_th.ts \
+    translations/Minimode_vn.ts \
+    translations/Minimode_zh.ts

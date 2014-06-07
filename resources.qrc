@@ -1,3 +1,6 @@
 <RCC>
-    <qresource prefix="/icons"/>
+    <qresource prefix="/">
+        <file>translations/Minimode_en.qm</file>
+        <file>translations/Minimode_fr.qm</file>
+    </qresource>
 </RCC>
