@@ -16,6 +16,9 @@ namespace TagLib {
 
 /**
  * \brief The FileHelper class is used to extract various but relevant fields in all types of tags (MP3, Flac, etc)
+ * \details
+ * \author      Matthieu Bachelier
+ * \copyright   GNU General Public License v3
  */
 class MIAMCORE_LIBRARY FileHelper
 {
@@ -24,12 +27,9 @@ private:
 
 	int fileType;
 
-	//static const QStringList suff;
-
 	QFileInfo _fileInfo;
 
 	Q_ENUMS(extension)
-	Q_ENUMS(MetaData)
 
 public:
 	enum extension {
@@ -43,14 +43,9 @@ public:
 		OGG		= 7
 	};
 
-	enum MetaData { ALBUM		= 0,
-					ARTIST		= 1,
-					COMMENT		= 2,
-					GENRE		= 3,
-					TITLE		= 4,
-					TRACKNUMBER	= 5,
-					YEAR		= 6,
-					UNCOMMON	= 7};
+	enum TagKey {
+		Artist
+	};
 
 	FileHelper(const QMediaContent &track);
 
@@ -62,10 +57,11 @@ private:
 public:
 	virtual ~FileHelper();
 
-	//inline static QStringList suffixes() { return suff; }
+	static const QStringList suffixes();
 
 	/** Field ArtistAlbum if exists (in a compilation for example). */
 	QString artistAlbum() const;
+	void setArtistAlbum(const QString &artistAlbum);
 
 	/** Extract field disc number. */
 	int discNumber() const;
@@ -99,12 +95,14 @@ public:
 	bool save();
 	inline QFileInfo fileInfo() const { return _fileInfo; }
 
-	inline TagLib::File* file() const { return _file; }
+	inline TagLib::File *file() { return _file; }
 
 private:
 	QString convertKeyToID3v2Key(QString key);
 
 	QString extractFlacFeature(const QString &featureToExtract) const;
+
+	QString extractMp4Feature(const QString &featureToExtract) const;
 
 	QString extractMpegFeature(const QString &featureToExtract) const;
 };
