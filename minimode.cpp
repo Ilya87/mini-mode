@@ -93,23 +93,23 @@ void Minimode::setMediaPlayer(QWeakPointer<MediaPlayer> mediaPlayer)
 	});
 	connect(_ui.close, &QPushButton::clicked, &QApplication::quit);
 
-	connect(_mediaPlayer.data(), &QMediaPlayer::currentMediaChanged, [=](const QMediaContent &media) {
+	connect(_mediaPlayer.data(), &MediaPlayer::currentMediaChanged, [=](const QMediaContent &media) {
 		FileHelper fh(media);
 		_ui.currentTrack->setText(fh.trackNumber().append(" - ").append(fh.title()));
 	});
 
-	connect(_mediaPlayer.data(), &QMediaPlayer::positionChanged, [=] (qint64 pos) {
+	connect(_mediaPlayer.data(), &MediaPlayer::positionChanged, [=] (qint64 pos) {
 		if (_mediaPlayer.data()->duration() > 0) {
 			_ui.time->setTime(pos, _mediaPlayer.data()->duration());
 		}
 	});
 }
 
-void Minimode::toggleViews(QWidget *view)
+/*void Minimode::toggleViews(QWidget *view)
 {
 	view->close();
 	this->show();
-}
+}*/
 
 /** Redefined to be able to drag this widget on screen. */
 void Minimode::mouseMoveEvent(QMouseEvent *e)

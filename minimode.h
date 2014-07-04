@@ -44,11 +44,11 @@ public:
 
 	inline virtual QString name() const { return "Minimode"; }
 
-	inline virtual bool providesView() const { return true; }
+	inline virtual QWidget* providesView() { return this; }
 
 	virtual void setMediaPlayer(QWeakPointer<MediaPlayer> mediaPlayer);
 
-	virtual void toggleViews(QWidget *view);
+	//virtual void toggleViews(QWidget *view);
 
 	inline virtual QString version() const { return "1.0"; }
 

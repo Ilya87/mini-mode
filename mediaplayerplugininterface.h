@@ -7,13 +7,11 @@
 class MIAMCORE_LIBRARY MediaPlayerPluginInterface : public BasicPluginInterface
 {
 public:
-	virtual ~MediaPlayerPluginInterface() {}
+    virtual ~MediaPlayerPluginInterface() {}
 
-	virtual bool providesView() const = 0;
+    virtual QWidget* providesView() = 0;
 
-	virtual void setMediaPlayer(QWeakPointer<MediaPlayer>) = 0;
-
-	virtual void toggleViews(QWidget *) {}
+    virtual void setMediaPlayer(QWeakPointer<MediaPlayer>) = 0;
 };
 QT_BEGIN_NAMESPACE
 
