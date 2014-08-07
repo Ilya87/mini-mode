@@ -20,9 +20,9 @@ CONFIG(release, debug|release) {
 
 INSTALLS += target
 
-HEADERS += basicplugininterface.h \
+HEADERS += basicplugin.h \
     mediaplayer.h \
-    mediaplayerplugininterface.h \
+    mediaplayerplugin.h \
     miamcore_global.h \
     minimode.h \
     settings.h \

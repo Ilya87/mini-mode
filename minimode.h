@@ -1,7 +1,7 @@
 #ifndef MINIMODE_H
 #define MINIMODE_H
 
-#include "mediaplayerplugininterface.h"
+#include "mediaplayerplugin.h"
 #include "miamcore_global.h"
 
 #include "mediaplayer.h"
@@ -19,11 +19,11 @@
  * \version     1.0
  * \copyright   GNU General Public License v3
  */
-class Minimode : public QWidget, public MediaPlayerPluginInterface
+class Minimode : public QWidget, public MediaPlayerPlugin
 {
 	Q_OBJECT
-	Q_PLUGIN_METADATA(IID MediaPlayerPluginInterface_iid)
-	Q_INTERFACES(MediaPlayerPluginInterface)
+	Q_PLUGIN_METADATA(IID MediaPlayerPlugin_iid)
+	Q_INTERFACES(MediaPlayerPlugin)
 
 private:
 	Ui::MiniModeConfigPage _config;
@@ -63,7 +63,6 @@ protected:
 
 private:
 	void applyColorToStandardIcon(bool hasTheme, QAbstractButton *button);
-
 };
 
 #endif // MINIMODE_H

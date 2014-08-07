@@ -19,7 +19,8 @@
 Minimode::Minimode()
 	: QWidget(NULL), _startMoving(false), _pos(0, 0)
 {
-	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+	this->setAttribute(Qt::WA_DeleteOnClose, true);
+	this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 	this->setWindowIcon(QIcon(":/icons/mmmmp_win32"));
 
 	_ui.setupUi(this);
@@ -37,8 +38,7 @@ Minimode::Minimode()
 	_ui.close->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton));
 }
 
-Minimode::~Minimode()
-{}
+Minimode::~Minimode() {}
 
 QWidget* Minimode::configPage()
 {
