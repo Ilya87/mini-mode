@@ -98,9 +98,9 @@ void Minimode::setMediaPlayer(QWeakPointer<MediaPlayer> mediaPlayer)
 		_ui.currentTrack->setText(fh.trackNumber().append(" - ").append(fh.title()));
 	});
 
-	connect(_mediaPlayer.data(), &MediaPlayer::positionChanged, [=] (qint64 pos) {
-		if (_mediaPlayer.data()->duration() > 0) {
-			_ui.time->setTime(pos, _mediaPlayer.data()->duration());
+	connect(_mediaPlayer.data(), &MediaPlayer::positionChanged, [=] (qint64 pos, qint64 duration) {
+		if (duration > 0) {
+			_ui.time->setTime(pos, duration);
 		}
 	});
 }
