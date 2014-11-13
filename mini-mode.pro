@@ -20,13 +20,13 @@ CONFIG(release, debug|release) {
 
 INSTALLS += target
 
-HEADERS += basicplugin.h \
+HEADERS += interfaces/basicplugin.h \
+    interfaces/mediaplayerplugin.h \
+    filehelper.h \
     mediaplayer.h \
-    mediaplayerplugin.h \
     miamcore_global.h \
     minimode.h \
     settings.h \
-    filehelper.h \
     timelabel.h
 
 SOURCES += minimode.cpp

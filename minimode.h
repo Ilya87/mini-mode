@@ -1,7 +1,7 @@
 #ifndef MINIMODE_H
 #define MINIMODE_H
 
-#include "mediaplayerplugin.h"
+#include "interfaces/mediaplayerplugin.h"
 #include "miamcore_global.h"
 
 #include "mediaplayer.h"

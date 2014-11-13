@@ -70,6 +70,8 @@ public:
 	/** Extract field disc number. */
 	int discNumber(bool canBeZero = false) const;
 
+
+
 	/** Extract the inner picture if exists. */
 	Cover* extractCover();
 
@@ -84,6 +86,10 @@ public:
 	/** Sets the inner picture. */
 	void setCover(Cover *cover);
 
+	/** Set or remove any disc number. */
+	void setDiscNumber(const QString &disc);
+
+	/** Set or remove any rating. */
 	void setRating(int rating);
 
 	/// Facade
@@ -105,10 +111,9 @@ private:
 	QString convertKeyToID3v2Key(QString key);
 
 	QString extractFlacFeature(const QString &featureToExtract) const;
-
-	QString extractMp4Feature(const QString &featureToExtract) const;
-
+	QString extractGenericFeature(const QString &featureToExtract) const;
 	QString extractMpegFeature(const QString &featureToExtract) const;
+	QString extractVorbisFeature(const QString &featureToExtract) const;
 
 	int ratingForID3v2(TagLib::ID3v2::Tag *tag) const;
 	void setRatingForID3v2(int rating, TagLib::ID3v2::Tag *tag);

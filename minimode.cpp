@@ -46,7 +46,7 @@ QWidget* Minimode::configPage()
 	_config.setupUi(widget);
 
 	// Init the UI with correct values
-	bool hasWinampTheme = Settings::getInstance()->value("hasWinampTheme").toBool();
+	bool hasWinampTheme = Settings::instance()->value("hasWinampTheme").toBool();
 	_config.winampCheckBox->setChecked(hasWinampTheme);
 
 	auto apply = [this](bool colorIcons) {
@@ -59,7 +59,7 @@ QWidget* Minimode::configPage()
 
 	// Connect the UI with the settings
 	connect(_config.winampCheckBox, &QCheckBox::toggled, [=](bool b) {
-		Settings::getInstance()->setValue("hasWinampTheme", b);
+		Settings::instance()->setValue("hasWinampTheme", b);
 		apply(b);
 	});
 	return widget;
@@ -93,8 +93,8 @@ void Minimode::setMediaPlayer(QWeakPointer<MediaPlayer> mediaPlayer)
 	});
 	connect(_ui.close, &QPushButton::clicked, &QApplication::quit);
 
-	connect(_mediaPlayer.data(), &MediaPlayer::currentMediaChanged, [=](const QMediaContent &media) {
-		FileHelper fh(media);
+	connect(_mediaPlayer.data(), &MediaPlayer::currentMediaChanged, [=](const QString &uri) {
+		FileHelper fh(uri);
 		_ui.currentTrack->setText(fh.trackNumber().append(" - ").append(fh.title()));
 	});
 
