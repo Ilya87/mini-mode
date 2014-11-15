@@ -1,4 +1,4 @@
-QT      += widgets multimedia
+QT      += widgets multimedia sql
 
 TARGET   = $$qtLibraryTarget(mini-mode)
 TEMPLATE = lib
@@ -22,6 +22,14 @@ INSTALLS += target
 
 HEADERS += interfaces/basicplugin.h \
     interfaces/mediaplayerplugin.h \
+    model/albumdao.h \
+    model/artistdao.h \
+    model/genericdao.h \
+    model/playlistdao.h \
+    model/selectedtracksmodel.h \
+    model/sqldatabase.h \
+    model/trackdao.h \
+    model/yeardao.h \
     filehelper.h \
     mediaplayer.h \
     miamcore_global.h \

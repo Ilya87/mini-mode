@@ -38,6 +38,8 @@ public:
 
 	virtual ~Minimode();
 
+	virtual bool eventFilter(QObject *obj, QEvent *e);
+
 	virtual QWidget* configPage();
 
 	inline virtual bool isConfigurable() const { return true; }

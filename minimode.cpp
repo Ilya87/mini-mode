@@ -2,6 +2,7 @@
 
 #include "settings.h"
 #include "filehelper.h"
+#include "model/sqldatabase.h"
 
 #include <QApplication>
 #include <QDesktopWidget>
@@ -36,9 +37,28 @@ Minimode::Minimode()
 	_ui.minimize->setIcon(style()->standardIcon(QStyle::SP_TitleBarMinButton));
 	_ui.restore->setIcon(style()->standardIcon(QStyle::SP_TitleBarMaxButton));
 	_ui.close->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton));
+
+	_ui.slider->installEventFilter(this);
 }
 
 Minimode::~Minimode() {}
+
+bool Minimode::eventFilter(QObject *obj, QEvent *e)
+{
+	if (obj == _ui.slider && e->type() == QEvent::MouseMove) {
+		qDebug() << "MouseMove" << (float) _ui.slider->value() / 100.0;
+		_mediaPlayer.data()->seek((float) _ui.slider->value() / 100.0);
+		//_ui.slider->setValue();
+	} else if (obj == _ui.slider && e->type() == QEvent::MouseButtonRelease) {
+		qDebug() << "MouseButtonRelease";
+		_mediaPlayer.data()->setMute(false);
+	} else if (obj == _ui.slider && e->type() == QEvent::MouseButtonPress) {
+		qDebug() << "MouseButtonPress";
+		_mediaPlayer.data()->setMute(true);
+		_mediaPlayer.data()->seek((float) _ui.slider->value() / 100.0);
+	}
+	return QWidget::eventFilter(obj, e);
+}
 
 QWidget* Minimode::configPage()
 {
@@ -55,7 +75,6 @@ QWidget* Minimode::configPage()
 		}
 	};
 	apply(hasWinampTheme);
-
 
 	// Connect the UI with the settings
 	connect(_config.winampCheckBox, &QCheckBox::toggled, [=](bool b) {
@@ -75,12 +94,15 @@ void Minimode::setMediaPlayer(QWeakPointer<MediaPlayer> mediaPlayer)
 	connect(_ui.pause, &QPushButton::clicked, _mediaPlayer.data(), &MediaPlayer::pause);
 	connect(_ui.stop, &QPushButton::clicked, _mediaPlayer.data(), &MediaPlayer::stop);
 	connect(_ui.next, &QPushButton::clicked, _mediaPlayer.data(), &MediaPlayer::skipForward);
+	connect(_ui.slider, &QSlider::valueChanged, this, [=](int v) {
+		qDebug() << "slider changed" << v;
+	});
 
 	// Windows actions
 	connect(_ui.minimize, &QPushButton::clicked, [=]() {
 		QMainWindow *mw = qobject_cast<QMainWindow*>(_mediaPlayer.data()->parent());
 		if (mw) {
-			mw->close();
+			mw->hide();
 		}
 		this->showMinimized();
 	});
@@ -89,20 +111,24 @@ void Minimode::setMediaPlayer(QWeakPointer<MediaPlayer> mediaPlayer)
 		if (mw) {
 			mw->showNormal();
 		}
-		this->close();
+		this->hide();
 	});
 	connect(_ui.close, &QPushButton::clicked, &QApplication::quit);
 
 	connect(_mediaPlayer.data(), &MediaPlayer::currentMediaChanged, [=](const QString &uri) {
-		FileHelper fh(uri);
-		_ui.currentTrack->setText(fh.trackNumber().append(" - ").append(fh.title()));
+		TrackDAO track = SqlDatabase::instance()->selectTrack(uri);
+		_ui.currentTrack->setText(track.trackNumber().append(" - ").append(track.title()));
 	});
 
 	connect(_mediaPlayer.data(), &MediaPlayer::positionChanged, [=] (qint64 pos, qint64 duration) {
 		if (duration > 0) {
 			_ui.time->setTime(pos, duration);
+			if (duration > 0) {
+				_ui.slider->setValue(pos / duration * 100);
+			}
 		}
 	});
+
 }
 
 /*void Minimode::toggleViews(QWidget *view)
@@ -116,6 +142,11 @@ void Minimode::mouseMoveEvent(QMouseEvent *e)
 {
 	static int _OFFSET = 15;
 	if (_startMoving) {
+		/// TODO multiple screens
+		// Detect when one has changed from one screen to another
+		if (e->pos().x() < 0 || e->pos().y() < 0) {
+			qDebug() << "todo multiple screens";
+		}
 		const QRect screen = QApplication::desktop()->screenGeometry();
 		// Top edge screen
 		if (frameGeometry().top() - screen.top() <= _OFFSET && (e->globalPos().y() - _pos.y()) <= _OFFSET) {
