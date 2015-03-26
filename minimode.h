@@ -50,9 +50,10 @@ public:
 
 	virtual void setMediaPlayer(QWeakPointer<MediaPlayer> mediaPlayer);
 
-	//virtual void toggleViews(QWidget *view);
-
 	inline virtual QString version() const { return "1.0"; }
+
+	/** No new extensions are supported with this mini-player. */
+	inline virtual QStringList extensions() const { return QStringList(); }
 
 protected:
 	/** Redefined to be able to drag this widget on screen. */
