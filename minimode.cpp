@@ -46,23 +46,19 @@ Minimode::~Minimode() {}
 bool Minimode::eventFilter(QObject *obj, QEvent *e)
 {
 	if (obj == _ui.slider && e->type() == QEvent::MouseMove) {
-		qDebug() << "MouseMove" << (float) _ui.slider->value() / 100.0;
-		_mediaPlayer.data()->seek((float) _ui.slider->value() / 100.0);
-		//_ui.slider->setValue();
+		_mediaPlayer->seek((float) _ui.slider->value() / 100.0);
 	} else if (obj == _ui.slider && e->type() == QEvent::MouseButtonRelease) {
-		qDebug() << "MouseButtonRelease";
-		_mediaPlayer.data()->setMute(false);
+		_mediaPlayer->setMute(false);
 	} else if (obj == _ui.slider && e->type() == QEvent::MouseButtonPress) {
-		qDebug() << "MouseButtonPress";
-		_mediaPlayer.data()->setMute(true);
-		_mediaPlayer.data()->seek((float) _ui.slider->value() / 100.0);
+		_mediaPlayer->setMute(true);
+		_mediaPlayer->seek((float) _ui.slider->value() / 100.0);
 	}
 	return QWidget::eventFilter(obj, e);
 }
 
 QWidget* Minimode::configPage()
 {
-	QWidget *widget = new QWidget();
+	QWidget *widget = new QWidget;
 	_config.setupUi(widget);
 
 	// Init the UI with correct values
@@ -70,7 +66,7 @@ QWidget* Minimode::configPage()
 	_config.winampCheckBox->setChecked(hasWinampTheme);
 
 	auto apply = [this](bool colorIcons) {
-		foreach (QPushButton *b, findChildren<QPushButton*>()) {
+		for (QPushButton *b : findChildren<QPushButton*>()) {
 			this->applyColorToStandardIcon(colorIcons, b);
 		}
 	};
@@ -84,43 +80,47 @@ QWidget* Minimode::configPage()
 	return widget;
 }
 
-void Minimode::setMediaPlayer(QWeakPointer<MediaPlayer> mediaPlayer)
+void Minimode::setMediaPlayer(MediaPlayer *mediaPlayer)
 {
 	_mediaPlayer = mediaPlayer;
 
 	// Multimedia actions
-	connect(_ui.previous, &QPushButton::clicked, _mediaPlayer.data(), &MediaPlayer::skipBackward);
-	connect(_ui.play, &QPushButton::clicked, _mediaPlayer.data(), &MediaPlayer::play);
-	connect(_ui.pause, &QPushButton::clicked, _mediaPlayer.data(), &MediaPlayer::pause);
-	connect(_ui.stop, &QPushButton::clicked, _mediaPlayer.data(), &MediaPlayer::stop);
-	connect(_ui.next, &QPushButton::clicked, _mediaPlayer.data(), &MediaPlayer::skipForward);
-	connect(_ui.slider, &QSlider::valueChanged, this, [=](int v) {
-		qDebug() << "slider changed" << v;
+	connect(_ui.previous, &QPushButton::clicked, _mediaPlayer, &MediaPlayer::skipBackward);
+	connect(_ui.play, &QPushButton::clicked, _mediaPlayer, &MediaPlayer::play);
+	connect(_ui.pause, &QPushButton::clicked, _mediaPlayer, &MediaPlayer::pause);
+	connect(_ui.stop, &QPushButton::clicked, _mediaPlayer, &MediaPlayer::stop);
+	connect(_ui.next, &QPushButton::clicked, _mediaPlayer, &MediaPlayer::skipForward);
+	connect(_ui.slider, &QSlider::valueChanged, this, [=](int) {
+		//qDebug() << "slider changed" << v;
 	});
 
 	// Windows actions
 	connect(_ui.minimize, &QPushButton::clicked, [=]() {
-		QMainWindow *mw = qobject_cast<QMainWindow*>(_mediaPlayer.data()->parent());
+		QMainWindow *mw = qobject_cast<QMainWindow*>(_mediaPlayer->parent());
 		if (mw) {
 			mw->hide();
 		}
 		this->showMinimized();
 	});
 	connect(_ui.restore, &QPushButton::clicked, [=]() {
-		QMainWindow *mw = qobject_cast<QMainWindow*>(_mediaPlayer.data()->parent());
-		if (mw) {
+		if (_mediaPlayer->parent()) {
+			QMainWindow *mw = qobject_cast<QMainWindow*>(_mediaPlayer->parent());
 			mw->showNormal();
+			this->hide();
+			QAction *action = mw->findChild<QAction*>(Settings::instance()->lastActiveView());
+			if (action) {
+				action->trigger();
+			}
 		}
-		this->hide();
 	});
 	connect(_ui.close, &QPushButton::clicked, &QApplication::quit);
 
-	connect(_mediaPlayer.data(), &MediaPlayer::currentMediaChanged, [=](const QString &uri) {
+	connect(_mediaPlayer, &MediaPlayer::currentMediaChanged, [=](const QString &uri) {
 		TrackDAO track = SqlDatabase::instance()->selectTrack(uri);
 		_ui.currentTrack->setText(track.trackNumber().append(" - ").append(track.title()));
 	});
 
-	connect(_mediaPlayer.data(), &MediaPlayer::positionChanged, [=] (qint64 pos, qint64 duration) {
+	connect(_mediaPlayer, &MediaPlayer::positionChanged, [=] (qint64 pos, qint64 duration) {
 		if (duration > 0) {
 			_ui.time->setTime(pos, duration);
 			if (duration > 0) {
@@ -128,14 +128,7 @@ void Minimode::setMediaPlayer(QWeakPointer<MediaPlayer> mediaPlayer)
 			}
 		}
 	});
-
 }
-
-/*void Minimode::toggleViews(QWidget *view)
-{
-	view->close();
-	this->show();
-}*/
 
 /** Redefined to be able to drag this widget on screen. */
 void Minimode::mouseMoveEvent(QMouseEvent *e)
@@ -145,25 +138,25 @@ void Minimode::mouseMoveEvent(QMouseEvent *e)
 		/// TODO multiple screens
 		// Detect when one has changed from one screen to another
 		if (e->pos().x() < 0 || e->pos().y() < 0) {
-			qDebug() << "todo multiple screens";
+			//qDebug() << "todo multiple screens";
 		}
 		const QRect screen = QApplication::desktop()->screenGeometry();
 		// Top edge screen
 		if (frameGeometry().top() - screen.top() <= _OFFSET && (e->globalPos().y() - _pos.y()) <= _OFFSET) {
-			qDebug() << "top edge" << frameGeometry() << _pos << e->globalPos();
+			//qDebug() << "top edge" << frameGeometry() << _pos << e->globalPos();
 			move(e->globalPos().x() - _pos.x(), 0);
 		} else if (screen.right() - frameGeometry().right() <= _OFFSET && (_globalPos.x() - e->globalPos().x()) <= _OFFSET) { // Right edge screen
-			qDebug() << "right edge" << frameGeometry() << _pos << e->globalPos();
+			//qDebug() << "right edge" << frameGeometry() << _pos << e->globalPos();
 			move(screen.right() - frameGeometry().width() + 1, e->globalPos().y() - _pos.y());
 			_globalPos = e->globalPos();
 		} else if (screen.bottom() - frameGeometry().bottom() <= _OFFSET && (_pos.y() - e->globalPos().y()) <= _OFFSET) { // Bottom edge screen
-			qDebug() << "bottom edge" << frameGeometry() << _pos << e->globalPos();
+			//qDebug() << "bottom edge" << frameGeometry() << _pos << e->globalPos();
 			move(e->globalPos().x() - _pos.x(), 0);
 		} else if (frameGeometry().left() - screen.left() <= _OFFSET && (e->globalPos().x() - _pos.x()) <= _OFFSET) { // Left edge screen
-			qDebug() << "left edge" << frameGeometry() << _pos << e->globalPos();
+			//qDebug() << "left edge" << frameGeometry() << _pos << e->globalPos();
 			move(0, e->globalPos().y() - _pos.y());
 		} else { // Inside the screen
-			qDebug() << "inside screen" << frameGeometry();
+			//qDebug() << "inside screen" << frameGeometry();
 			// Substract the click in the middle of this widget because we don't want to move() to (0,0)
 			move(e->globalPos().x() - _pos.x(), e->globalPos().y() - _pos.y());
 		}
@@ -182,8 +175,6 @@ void Minimode::mouseReleaseEvent(QMouseEvent *e)
 
 void Minimode::mousePressEvent(QMouseEvent *e)
 {
-	qDebug() << Q_FUNC_INFO << e->pos() << e->globalPos();
-	//if (_startMoving == false) {
 	_startMoving = true;
 	// Keep a reference from one's cursor
 	_pos = e->pos();

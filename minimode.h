@@ -29,7 +29,7 @@ private:
 	Ui::MiniModeConfigPage _config;
 	Ui::MiniMode _ui;
 
-	QWeakPointer<MediaPlayer> _mediaPlayer;
+	MediaPlayer *_mediaPlayer;
 	bool _startMoving;
 	QPoint _pos, _globalPos;
 
@@ -48,7 +48,7 @@ public:
 
 	inline virtual QWidget* providesView() { return this; }
 
-	virtual void setMediaPlayer(QWeakPointer<MediaPlayer> mediaPlayer);
+	virtual void setMediaPlayer(MediaPlayer *mediaPlayer) override;
 
 	inline virtual QString version() const { return "1.0"; }
 

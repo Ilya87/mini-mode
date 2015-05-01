@@ -35,7 +35,8 @@ HEADERS += interfaces/basicplugin.h \
     miamcore_global.h \
     minimode.h \
     settings.h \
-    timelabel.h
+    timelabel.h \
+    mediaplaylist.h
 
 SOURCES += minimode.cpp
 
