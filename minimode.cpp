@@ -116,7 +116,7 @@ void Minimode::setMediaPlayer(MediaPlayer *mediaPlayer)
 	connect(_ui.close, &QPushButton::clicked, &QApplication::quit);
 
 	connect(_mediaPlayer, &MediaPlayer::currentMediaChanged, [=](const QString &uri) {
-		TrackDAO track = SqlDatabase::instance()->selectTrack(uri);
+		TrackDAO track = SqlDatabase::instance()->selectTrackByURI(uri);
 		_ui.currentTrack->setText(track.trackNumber().append(" - ").append(track.title()));
 	});
 
