@@ -18,7 +18,7 @@
 #include <QtDebug>
 
 Minimode::Minimode()
-	: QWidget(NULL), _startMoving(false), _pos(0, 0)
+	: QWidget(nullptr), _startMoving(false), _pos(0, 0)
 {
 	this->setAttribute(Qt::WA_DeleteOnClose, true);
 	this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
