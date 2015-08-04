@@ -3,19 +3,26 @@ QT      += widgets multimedia sql
 TARGET   = $$qtLibraryTarget(mini-mode)
 TEMPLATE = lib
 
-MiamPlayerBuildDirectory = C:\dev\Miam-Player-build-x64\MiamPlayer
-
 DEFINES += MIAM_PLUGIN
 
 CONFIG  += c++11
-CONFIG(debug, debug|release) {
-    target.path = $$MiamPlayerBuildDirectory\debug\plugins
-    LIBS += -Ldebug -lMiamCore
-}
+# TODO: how to minimize hardcoded paths?
+win32 {
+    MiamPlayerBuildDirectory = C:\dev\Miam-Player-build-x64\MiamPlayer
+    CONFIG(debug, debug|release) {
+        target.path = $$MiamPlayerBuildDirectory\debug\plugins
+        LIBS += -Ldebug -lMiamCore
+    }
 
-CONFIG(release, debug|release) {
-    target.path = $$MiamPlayerBuildDirectory\release\plugins
-    LIBS += -Lrelease -lMiamCore
+    CONFIG(release, debug|release) {
+        target.path = $$MiamPlayerBuildDirectory\release\plugins
+        LIBS += -Lrelease -lMiamCore
+    }
+}
+unix {
+    MiamPlayerBuildDirectory = /home/mbach/Miam-Player-release
+    target.path = $$MiamPlayerBuildDirectory/MiamPlayer/plugins
+    LIBS += -L$$MiamPlayerBuildDirectory/MiamCore -lmiam-core
 }
 
 INSTALLS += target
@@ -32,19 +39,17 @@ HEADERS += interfaces/basicplugin.h \
     model/yeardao.h \
     filehelper.h \
     mediaplayer.h \
+    mediaplaylist.h \
     miamcore_global.h \
     minimode.h \
     settings.h \
-    timelabel.h \
-    mediaplaylist.h
+    timelabel.h
 
 SOURCES += minimode.cpp
 
-RESOURCES += \
-    resources.qrc
+RESOURCES += resources.qrc
 
-FORMS += \
-    config.ui \
+FORMS += config.ui \
     mini-mode.ui
 
 TRANSLATIONS += translations/Minimode_ar.ts \
