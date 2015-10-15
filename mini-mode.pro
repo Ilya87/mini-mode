@@ -8,7 +8,7 @@ DEFINES += MIAM_PLUGIN
 CONFIG  += c++11
 # TODO: how to minimize hardcoded paths?
 win32 {
-    MiamPlayerBuildDirectory = C:\dev\Miam-Player-build\qt5.4.2\MiamPlayer
+    MiamPlayerBuildDirectory = C:\dev\Miam-Player-build\qt5.5.1\MiamPlayer
     CONFIG(debug, debug|release) {
 	target.path = $$MiamPlayerBuildDirectory\debug\plugins
 	LIBS += -Ldebug -lMiamCore
