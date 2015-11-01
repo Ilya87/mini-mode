@@ -1,25 +1,22 @@
 #ifndef MINIMODE_H
 #define MINIMODE_H
 
+/// From the API
 #include "interfaces/mediaplayerplugin.h"
 #include "miamcore_global.h"
-
 #include "mediaplayer.h"
 
-#include <QMouseEvent>
-#include <QPushButton>
-#include <QWindow>
-
+/// From this plugin
 #include "ui_config.h"
-#include "ui_mini-mode.h"
+#include "minimodewidget.h"
 
 /**
  * \brief       The Minimode class is a mini player like the good old Winamp
  * \author      Matthieu Bachelier
- * \version     1.0
+ * \version     1.1
  * \copyright   GNU General Public License v3
  */
-class Minimode : public QWidget, public MediaPlayerPlugin
+class Minimode : public MediaPlayerPlugin
 {
 	Q_OBJECT
 	Q_PLUGIN_METADATA(IID MediaPlayerPlugin_iid)
@@ -27,45 +24,30 @@ class Minimode : public QWidget, public MediaPlayerPlugin
 
 private:
 	Ui::MiniModeConfigPage _config;
-	Ui::MiniMode _ui;
-
 	MediaPlayer *_mediaPlayer;
-	bool _startMoving;
-	QPoint _pos, _globalPos;
+	MiniModeWidget *_miniModeWidget;
 
 public:
-	explicit Minimode();
+	explicit Minimode(QObject *parent = nullptr);
 
 	virtual ~Minimode();
 
-	virtual bool eventFilter(QObject *obj, QEvent *e);
+	virtual QWidget* configPage() override;
 
-	virtual QWidget* configPage();
+	virtual bool eventFilter(QObject *obj, QEvent *e) override;
 
-	inline virtual bool isConfigurable() const { return true; }
+	inline virtual bool isConfigurable() const override { return true; }
 
-	inline virtual QString name() const { return "Minimode"; }
+	inline virtual QString name() const override { return "Minimode"; }
 
-	inline virtual QWidget* providesView() { return this; }
+	inline virtual QWidget* providesView() override { return _miniModeWidget; }
 
 	virtual void setMediaPlayer(MediaPlayer *mediaPlayer) override;
 
-	inline virtual QString version() const { return "1.0"; }
+	inline virtual QString version() const override { return "1.1"; }
 
 	/** No new extensions are supported with this mini-player. */
-	inline virtual QStringList extensions() const { return QStringList(); }
-
-protected:
-	/** Redefined to be able to drag this widget on screen. */
-	void mouseMoveEvent(QMouseEvent *e);
-
-	/** Redefined to be able to drag this widget on screen. */
-	void mouseReleaseEvent(QMouseEvent *e);
-
-	void mousePressEvent(QMouseEvent *e);
-
-private:
-	void applyColorToStandardIcon(bool hasTheme, QAbstractButton *button);
+	inline virtual QStringList extensions() const override { return QStringList(); }
 };
 
 #endif // MINIMODE_H
