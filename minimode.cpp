@@ -19,7 +19,6 @@ Minimode::Minimode(QObject *parent)
 	: MediaPlayerPlugin(parent)
 	, _miniModeWidget(new MiniModeWidget)
 {
-
 }
 
 Minimode::~Minimode()
@@ -102,6 +101,13 @@ void Minimode::setMediaPlayer(MediaPlayer *mediaPlayer)
 	connect(_mediaPlayer, &MediaPlayer::currentMediaChanged, [=](const QString &uri) {
 		TrackDAO track = SqlDatabase::instance()->selectTrackByURI(uri);
 		_miniModeWidget->ui.currentTrack->setText(track.trackNumber().append(" - ").append(track.title()));
+	});
+
+	// Reset the label to 0
+	connect(_mediaPlayer, &MediaPlayer::stateChanged, [=](QMediaPlayer::State state) {
+		if (state == QMediaPlayer::StoppedState) {
+			_miniModeWidget->ui.time->setTime(0, _mediaPlayer->duration());
+		}
 	});
 
 	connect(_mediaPlayer, &MediaPlayer::positionChanged, [=] (qint64 pos, qint64 duration) {

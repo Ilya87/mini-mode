@@ -1,5 +1,7 @@
 #include "minimodewidget.h"
 
+#include "settings.h"
+
 #include <QDesktopWidget>
 #include <QMouseEvent>
 #include <QPainter>
@@ -24,12 +26,20 @@ MiniModeWidget::MiniModeWidget(QWidget *parent)
 	ui.stop->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
 	ui.next->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
 
+	QMap<QString, QVariant> shortcutMap = Settings::instance()->shortcuts();
+	ui.previous->setShortcut(QKeySequence(shortcutMap.value("skipBackward").toString()));
+	ui.play->setShortcut(QKeySequence(shortcutMap.value("play").toString()));
+	ui.pause->setShortcut(QKeySequence(shortcutMap.value("pause").toString()));
+	ui.stop->setShortcut(QKeySequence(shortcutMap.value("stop").toString()));
+	ui.next->setShortcut(QKeySequence(shortcutMap.value("skipForward").toString()));
+
 	// Window management
 	ui.minimize->setIcon(style()->standardIcon(QStyle::SP_TitleBarMinButton));
 	ui.restore->setIcon(style()->standardIcon(QStyle::SP_TitleBarMaxButton));
 	ui.close->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton));
 
 	ui.slider->installEventFilter(this);
+	this->installEventFilter(this);
 }
 
 void MiniModeWidget::closeEvent(QCloseEvent *)
