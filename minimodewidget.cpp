@@ -21,15 +21,13 @@ MiniModeWidget::MiniModeWidget(QWidget *parent)
 
 	// Media buttons
 	ui.previous->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
-	ui.play->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
-	ui.pause->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+	ui.playPause->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
 	ui.stop->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
 	ui.next->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
 
 	QMap<QString, QVariant> shortcutMap = Settings::instance()->shortcuts();
 	ui.previous->setShortcut(QKeySequence(shortcutMap.value("skipBackward").toString()));
-	ui.play->setShortcut(QKeySequence(shortcutMap.value("play").toString()));
-	ui.pause->setShortcut(QKeySequence(shortcutMap.value("pause").toString()));
+	ui.playPause->setShortcut(QKeySequence(shortcutMap.value("play").toString()));
 	ui.stop->setShortcut(QKeySequence(shortcutMap.value("stop").toString()));
 	ui.next->setShortcut(QKeySequence(shortcutMap.value("skipForward").toString()));
 

@@ -98,40 +98,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="play">
-       <property name="maximumSize">
-        <size>
-         <width>12</width>
-         <height>12</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>1</pointsize>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton:focus {
-	border: none;
-	outline: none;
-}</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>10</width>
-         <height>10</height>
-        </size>
-       </property>
-       <property name="flat">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pause">
+      <widget class="QPushButton" name="playPause">
        <property name="maximumSize">
         <size>
          <width>12</width>

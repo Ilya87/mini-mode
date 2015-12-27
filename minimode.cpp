@@ -69,8 +69,7 @@ void Minimode::setMediaPlayer(MediaPlayer *mediaPlayer)
 
 	// Multimedia actions
 	connect(_miniModeWidget->ui.previous, &QPushButton::clicked, _mediaPlayer, &MediaPlayer::skipBackward);
-	connect(_miniModeWidget->ui.play, &QPushButton::clicked, _mediaPlayer, &MediaPlayer::play);
-	connect(_miniModeWidget->ui.pause, &QPushButton::clicked, _mediaPlayer, &MediaPlayer::pause);
+	connect(_miniModeWidget->ui.playPause, &QPushButton::clicked, _mediaPlayer, &MediaPlayer::togglePlayback);
 	connect(_miniModeWidget->ui.stop, &QPushButton::clicked, _mediaPlayer, &MediaPlayer::stop);
 	connect(_miniModeWidget->ui.next, &QPushButton::clicked, _mediaPlayer, &MediaPlayer::skipForward);
 	connect(_miniModeWidget->ui.slider, &QSlider::valueChanged, this, [=](int v) {
@@ -103,10 +102,18 @@ void Minimode::setMediaPlayer(MediaPlayer *mediaPlayer)
 		_miniModeWidget->ui.currentTrack->setText(track.trackNumber().append(" - ").append(track.title()));
 	});
 
-	// Reset the label to 0
 	connect(_mediaPlayer, &MediaPlayer::stateChanged, [=](QMediaPlayer::State state) {
-		if (state == QMediaPlayer::StoppedState) {
+		switch (state) {
+		case QMediaPlayer::StoppedState:
+			// Reset the label to 0
 			_miniModeWidget->ui.time->setTime(0, _mediaPlayer->duration());
+			break;
+		case QMediaPlayer::PlayingState:
+			_miniModeWidget->ui.playPause->setIcon(_miniModeWidget->style()->standardIcon(QStyle::SP_MediaPause));
+			break;
+		case QMediaPlayer::PausedState:
+			_miniModeWidget->ui.playPause->setIcon(_miniModeWidget->style()->standardIcon(QStyle::SP_MediaPlay));
+			break;
 		}
 	});
 
