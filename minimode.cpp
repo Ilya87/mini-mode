@@ -107,6 +107,7 @@ void Minimode::setMediaPlayer(MediaPlayer *mediaPlayer)
 		case QMediaPlayer::StoppedState:
 			// Reset the label to 0
 			_miniModeWidget->ui.time->setTime(0, _mediaPlayer->duration());
+			_miniModeWidget->ui.playPause->setIcon(_miniModeWidget->style()->standardIcon(QStyle::SP_MediaPlay));
 			break;
 		case QMediaPlayer::PlayingState:
 			_miniModeWidget->ui.playPause->setIcon(_miniModeWidget->style()->standardIcon(QStyle::SP_MediaPause));
