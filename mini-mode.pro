@@ -20,7 +20,7 @@ win32 {
     }
 }
 unix {
-    QMAKE_CXXFLAGS += -std=c++11
+    #QMAKE_CXXFLAGS += -std=c++11
 }
 unix:!macx {
     MiamPlayerBuildDirectory = /home/mbach/Miam-Player-release
@@ -28,7 +28,7 @@ unix:!macx {
     LIBS += -L$$MiamPlayerBuildDirectory/MiamCore -lmiam-core
 }
 macx {
-    QMAKE_CXXFLAGS += -mmacosx-version-min=10.9
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
     MiamPlayerBuildDirectory = /Users/mbach/dev/Miam-Player-build/src
     target.path = $$MiamPlayerBuildDirectory/MiamPlayer/MiamPlayer.app/Contents/PlugIns
     LIBS += -L$$MiamPlayerBuildDirectory/MiamCore -lmiam-core

@@ -17,6 +17,7 @@
 
 Minimode::Minimode(QObject *parent)
 	: MediaPlayerPlugin(parent)
+    , _mediaPlayer(nullptr)
 	, _miniModeWidget(new MiniModeWidget)
 {
 }
