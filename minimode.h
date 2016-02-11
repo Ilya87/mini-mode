@@ -8,12 +8,11 @@
 
 /// From this plugin
 #include "ui_config.h"
-#include "minimodewidget.h"
 
 /**
  * \brief       The Minimode class is a mini player like the good old Winamp
  * \author      Matthieu Bachelier
- * \version     1.1
+ * \version     1.2
  * \copyright   GNU General Public License v3
  */
 class Minimode : public MediaPlayerPlugin
@@ -25,7 +24,6 @@ class Minimode : public MediaPlayerPlugin
 private:
 	Ui::MiniModeConfigPage _config;
 	MediaPlayer *_mediaPlayer;
-	MiniModeWidget *_miniModeWidget;
 
 public:
 	explicit Minimode(QObject *parent = nullptr);
@@ -34,13 +32,11 @@ public:
 
 	virtual QWidget* configPage() override;
 
-	virtual bool eventFilter(QObject *obj, QEvent *e) override;
-
 	inline virtual bool isConfigurable() const override { return true; }
 
 	inline virtual QString name() const override { return "Minimode"; }
 
-	inline virtual QWidget* providesView() override { return _miniModeWidget; }
+	virtual AbstractView* instanciateView() override;
 
 	virtual void setMediaPlayer(MediaPlayer *mediaPlayer) override;
 

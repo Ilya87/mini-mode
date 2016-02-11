@@ -1,10 +1,10 @@
 #ifndef MINIMODEWIDGET_H
 #define MINIMODEWIDGET_H
 
-#include <QWidget>
+#include "abstractview.h"
 #include "ui_mini-mode.h"
 
-class MiniModeWidget : public QWidget
+class MiniModeWidget : public AbstractView
 {
 	Q_OBJECT
 private:
@@ -14,9 +14,13 @@ private:
 public:
 	Ui::MiniMode ui;
 
-	explicit MiniModeWidget(QWidget *parent = nullptr);
+	explicit MiniModeWidget(MediaPlayer *mediaPlayer, QWidget *parent = nullptr);
 
 	void applyColorToStandardIcon(bool hasTheme, QAbstractButton *button);
+
+	virtual bool eventFilter(QObject *obj, QEvent *e) override;
+
+	virtual bool viewProperty(Settings::ViewProperty vp) const override;
 
 protected:
 	virtual void closeEvent(QCloseEvent *) override;
@@ -28,6 +32,10 @@ protected:
 	virtual void mouseReleaseEvent(QMouseEvent *e) override;
 
 	virtual void mousePressEvent(QMouseEvent *e) override;
+
+public slots:
+	virtual void setViewProperty(Settings::ViewProperty vp, QVariant value) override;
+
 };
 
 #endif // MINIMODEWIDGET_H

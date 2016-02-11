@@ -358,7 +358,7 @@
   <customwidget>
    <class>TimeLabel</class>
    <extends>QLabel</extends>
-   <header>timelabel.h</header>
+   <header>widgets/timelabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

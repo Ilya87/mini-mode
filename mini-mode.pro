@@ -8,15 +8,15 @@ DEFINES += MIAM_PLUGIN
 CONFIG  += plugin c++11
 # TODO: how to minimize hardcoded paths?
 win32 {
-    MiamPlayerBuildDirectory = C:\dev\Miam-Player-build\src\MiamPlayer
+    MiamPlayerBuildDirectory = C:\dev\Miam-Player-build\src\Player
     CONFIG(debug, debug|release) {
 	target.path = $$MiamPlayerBuildDirectory\debug\plugins
-	LIBS += -Ldebug -lMiamCore
+	LIBS += -Ldebug -lCore
     }
 
     CONFIG(release, debug|release) {
 	target.path = $$MiamPlayerBuildDirectory\release\plugins
-	LIBS += -Lrelease -lMiamCore
+	LIBS += -Lrelease -lCore
     }
 }
 unix {
@@ -25,13 +25,13 @@ unix {
 unix:!macx {
     MiamPlayerBuildDirectory = /home/mbach/Miam-Player-release
     target.path = $$MiamPlayerBuildDirectory/MiamPlayer/plugins
-    LIBS += -L$$MiamPlayerBuildDirectory/MiamCore -lmiam-core
+    LIBS += -L$$MiamPlayerBuildDirectory/Core -lmiam-core
 }
 macx {
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
     MiamPlayerBuildDirectory = /Users/mbach/dev/Miam-Player-build/src
-    target.path = $$MiamPlayerBuildDirectory/MiamPlayer/MiamPlayer.app/Contents/PlugIns
-    LIBS += -L$$MiamPlayerBuildDirectory/MiamCore -lmiam-core
+    target.path = $$MiamPlayerBuildDirectory/Player/MiamPlayer.app/Contents/PlugIns
+    LIBS += -L$$MiamPlayerBuildDirectory/Core -lmiam-core
 }
 
 INSTALLS += target
@@ -46,14 +46,15 @@ HEADERS += interfaces/basicplugin.h \
     model/sqldatabase.h \
     model/trackdao.h \
     model/yeardao.h \
+    widgets/timelabel.h \
+    abstractview.h \
     filehelper.h \
     mediaplayer.h \
     mediaplaylist.h \
     miamcore_global.h \
     minimode.h \
-    settings.h \
-    timelabel.h \
-    minimodewidget.h
+    minimodewidget.h \
+    settings.h
 
 SOURCES += minimode.cpp \
     minimodewidget.cpp
