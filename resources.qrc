@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>translations/Minimode_en.qm</file>
         <file>translations/Minimode_fr.qm</file>
+        <file>translations/Minimode_ru.qm</file>
     </qresource>
 </RCC>
